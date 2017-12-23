@@ -35,13 +35,14 @@
 (provide mod-struct)
 (provide mod-struct?)
 (provide mod-struct-name)
+(provide mod-struct-lua-defs)
 (provide set-my-mod!)
 (provide my-mod)
 
 (provide add-item)
 (provide add-block)
 (provide add-recipe)
-
+(provide add-lua-def)
 
 (define STR_TYPE "~s")
 (define INT_TYPE "~a")
@@ -70,12 +71,12 @@
 
 ;DATA STRUCTURES
 
-(struct mod-struct (name items blocks recipes) #:transparent)
+(struct mod-struct (name items blocks recipes lua-defs) #:transparent)
 
 (struct asset-struct (name description) #:transparent)
 
 (define my-mod
-  (mod-struct "my_racket_mod" '() '() '()))
+  (mod-struct "my_racket_mod" '() '() '() '()))
 
 (define (set-my-mod! m)
   (set! my-mod m))
@@ -92,6 +93,11 @@
 (define (add-block m i)
   (struct-copy mod-struct m
                [blocks (cons i (mod-struct-blocks m))]))
+
+(define (add-lua-def m i)
+  (struct-copy mod-struct m
+               [lua-defs (cons i (mod-struct-lua-defs m))]))
+
 
 
 

@@ -9,6 +9,7 @@
 (require "items.rkt")
 (require "blocks.rkt")
 (require "recipes.rkt")
+(require "lua.rkt")
 
 (define/contract (compile-mod m)
   (-> mod-struct? boolean?)
@@ -21,6 +22,7 @@
                            (mod-struct-name m)
                            "\n\n\n"))))
   (and
+   (compile-lua-defs  m (mod-struct-lua-defs  m))
    (compile-blocks m (mod-struct-blocks m))
    (compile-items  m (mod-struct-items  m))
    (compile-recipes  m (mod-struct-recipes  m))
