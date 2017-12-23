@@ -28,6 +28,8 @@
 
 (provide path-for)
 
+(provide tree-map)
+
 
 
 (provide mod-struct)
@@ -44,6 +46,8 @@
 (define STR_TYPE "~s")
 (define INT_TYPE "~a")
 (define SYM_TYPE "~a")
+(define ARR_TYPE "ARR_TYPE")
+
 
 ;UTIL
 
@@ -52,6 +56,12 @@
 (define/contract (all-true l)
   (-> list? boolean?)
   (= (count identity l) (length l)))
+
+(define (tree-map f tree)
+  (if (list? tree)
+      (map (curry tree-map f) tree)
+      (f tree)
+      ))
 
 ;CONFIG
 
@@ -130,6 +140,7 @@
    (string-join
     (map (lambda (x) (format type x))
          arr) ",")))
+
 
 (define/contract (compile-ass-arr arr type1 type2)
   (-> list? any/c any/c string?)
