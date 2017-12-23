@@ -10,6 +10,7 @@
 (provide MINETEST_PATH)
 (provide path-for)
 (provide asset-name)
+(provide asset-short-name)
 
 (provide asset-struct)
 (provide asset-struct-name)
@@ -32,6 +33,12 @@
 (provide mod-struct)
 (provide mod-struct?)
 (provide mod-struct-name)
+(provide set-my-mod!)
+(provide my-mod)
+
+(provide add-item)
+(provide add-block)
+(provide add-recipe)
 
 
 (define STR_TYPE "~s")
@@ -55,8 +62,28 @@
 
 (struct mod-struct (name items blocks recipes) #:transparent)
 
-
 (struct asset-struct (name description) #:transparent)
+
+(define my-mod
+  (mod-struct "my_racket_mod" '() '() '()))
+
+(define (set-my-mod! m)
+  (set! my-mod m))
+
+;NOTE: Could make a syntax for defining adders automatically...
+(define (add-item m i)
+  (struct-copy mod-struct m
+               [items (cons i (mod-struct-items m))]))
+
+(define (add-recipe m i)
+  (struct-copy mod-struct m
+               [recipes (cons i (mod-struct-recipes m))]))
+
+(define (add-block m i)
+  (struct-copy mod-struct m
+               [blocks (cons i (mod-struct-blocks m))]))
+
+
 
 (define (variableify s)
   (string-downcase
@@ -65,8 +92,15 @@
     " "
     "_")))
 
-(define (asset-name a)
-  (variableify (asset-struct-name a)))
+(define (asset-short-name m a)
+  (second (string-split (asset-name m a) ":")))
+
+(define (asset-name m a)
+  (let ([name (variableify (asset-struct-name a))])
+    (if (string-contains? name "default:")
+              name
+              (++ (mod-struct-name m) ":" name))
+    ))
 
 (define (asset-description a)
   (asset-struct-description a))

@@ -3,6 +3,11 @@
 (provide block-struct)
 (provide block-struct?)
 (provide compile-blocks)
+(provide define-block)
+
+(provide default-block)
+
+(require (for-syntax racket/syntax))
 
 (require 2htdp/image)
 (require "core.rkt")
@@ -16,6 +21,65 @@
 ;})
 
 (struct block-struct asset-struct (tiles groups) #:transparent)
+
+;;Makes a stub -- e.g. for default:stone
+(define (default-block id)
+  (block-struct (++ "" id)
+                (++ "The default " id)
+                '()
+                '()))
+ 
+(define-syntax (define-default-block stx)
+  (syntax-case stx ()
+    [(_ x )
+     (with-syntax* ([name (symbol->string (format-symbol "default:~a" #'x))])
+       #`(begin
+           (define x (default-block name) ) 
+           (provide x) 
+           ) ) ]))
+
+(define-syntax (define-default-blocks stx)
+  (syntax-case stx ()
+    [(_ x ... )
+       #`(begin
+           (define-default-block x ) ...
+            
+           )  ]))
+
+(define-default-blocks
+  cobble
+  stonebrick
+  stone_block
+  mossycobble
+  desert_stone
+  desert_cobble
+  desert_stonebrick
+  desert_stone_block
+  sandstone
+  sandstonebrick
+  sandstone_block
+  desert_sandstone
+  desert_sandstone_brick
+  desert_sandstone_block
+  silver_sandstone
+  silver_sandstone_brick
+  silver_sandstone_block
+  obsidian
+  obsidianbrick
+  obsidian_block)
+
+
+(define-syntax (define-block stx)
+  (syntax-case stx ()
+    [(_ id desc tiles ... )
+     (with-syntax* ([item-id (format-id stx "~a" #'id)]
+                    
+                    [name (symbol->string (format-symbol "~a" #'id))])
+       #`(begin
+         ;  (define my-mod (empty-mod))
+           (define id (block-struct name desc (list tiles ...) '()))
+           (set-my-mod! (add-block my-mod id)))
+           )]))
 
 (define/contract (export-tiles-to-file m b)
   (-> mod-struct? block-struct? (listof boolean?))
@@ -50,13 +114,13 @@
 
 (define/contract (compile-block m b)
   (-> mod-struct? block-struct? string?)
-  (++ "-- My block is named " (asset-name b) "\n"
+  (++ "-- My block is named " (asset-name m b) "\n"
       (format
-"      minetest.register_node(\"~a:~a\", {
+"      minetest.register_node(\"~a\", {
          ~a,
          ~a,
          ~a,
-       })\n\n" (mod-struct-name m) (asset-name b)
+       })\n\n" (asset-name m b)
            (compile-asset-description m b)
            (compile-block-tiles m b)
            (compile-block-group m b)
