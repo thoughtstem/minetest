@@ -13,18 +13,18 @@
 (provide asset-short-name)
 
 (provide asset-struct)
+(provide asset-struct?)
 (provide asset-struct-name)
+(provide asset-struct-more)
+(provide asset->hash)
 
-(provide compile-arr)
-(provide compile-ass-arr)
+(provide compile-v)
+(provide special-compile)
+(provide special-compile-f)
 
 (provide compile-asset-description)
 
 (provide lua-file-for)
-
-(provide STR_TYPE)
-(provide SYM_TYPE)
-(provide INT_TYPE)
 
 (provide path-for)
 
@@ -44,13 +44,19 @@
 (provide add-recipe)
 (provide add-lua-def)
 
-(define STR_TYPE "~s")
-(define INT_TYPE "~a")
-(define SYM_TYPE "~a")
-(define ARR_TYPE "ARR_TYPE")
+(provide list_)
 
+(provide add-behaviour-to)
+(provide add-behaviour)
+
+(require (for-syntax racket/syntax))
 
 ;UTIL
+
+(define (list_ x)
+  (if (list? x)
+      x
+      (list x)))
 
 (define ++ string-append)
 
@@ -71,9 +77,64 @@
 
 ;DATA STRUCTURES
 
-(struct mod-struct (name items blocks recipes lua-defs) #:transparent)
+(struct special-compile (f))
 
-(struct asset-struct (name description) #:transparent)
+(struct mod-struct (name items blocks recipes lua-defs) )
+
+(struct asset-struct (name description more mod) #:transparent)
+
+(define (asset->hash a)
+  (hash-set
+   (asset-struct-more a)
+   'description
+   (asset-struct-description a)))
+
+
+(define-syntax (add-behaviour-to stx)
+  (syntax-case stx ()
+    [(_ target (key val)) 
+     (with-syntax* ([target-id (format-id stx "~a" #'target)]
+                    [key-str (symbol->string
+                              (format-symbol "~a" #'key))])
+       #`(begin
+           (add-behaviour target-id
+                       (list key-str val)
+                       my-mod)
+          "Added behaviour"))]))
+
+
+(define (add-behaviour target kv m)
+  (let ([updated-target (add-to-more target kv)])
+    (set! my-mod
+          (replace-in-mod m target updated-target))))
+
+(define (replace-in-mod m t1 t2)
+  (mod-struct
+     (mod-struct-name  m)
+     (replace-in-list (mod-struct-items m) t1 t2)
+     (replace-in-list (mod-struct-blocks m) t1 t2)
+     (replace-in-list (mod-struct-recipes m) t1 t2)
+     (replace-in-list (mod-struct-lua-defs m) t1 t2)))
+
+(define (replace-in-list l t1 t2)
+  (map (lambda (x)
+         (if (eq? (asset-struct-name x) (asset-struct-name t1))
+             t2
+             x)) l))
+
+(define (add-to-more a kv)
+  (let ([new-more   (hash-set
+                     (asset-struct-more a)
+                     (string->symbol (first kv))
+                     (second kv))])
+    (struct-copy asset-struct a
+                 [more new-more])))
+
+
+
+(provide default-mod)
+(define default-mod
+  (mod-struct "default" '() '() '() '()))
 
 (define my-mod
   (mod-struct "my_racket_mod" '() '() '() '()))
@@ -111,8 +172,9 @@
 (define (asset-short-name m a)
   (second (string-split (asset-name m a) ":")))
 
-(define (asset-name m a)
-  (let ([name (variableify (asset-struct-name a))])
+(define (asset-name a)
+  (let ([m  (asset-struct-mod a)]
+        [name (variableify (asset-struct-name a))])
     (if (string-contains? name "default:")
               name
               (++ (mod-struct-name m) ":" name))
@@ -134,26 +196,56 @@
   (-> mod-struct? string?)
   (string-append MINETEST_PATH "/mods/" (mod-struct-name m)))
 
+(define/contract (compile-v v)
+  (-> any/c any/c)
+  (cond [(special-compile? v) ((special-compile-f v))]
+        [(string? v) (format "\"~a\"" v)]
+        [(number? v) (number->string v)]
+        [(hash? v) (compile-hash v)]
+        [(list? v) (++ "{" (string-join (map compile-v v) ",") "}")]
+        [else
+         (displayln v)
+         (error "Non compilable value")]))
+
+(define/contract (compile-kv k v)
+  (-> (or/c string? symbol? number?) any/c string?)
+    (format "~a = ~a" k (compile-v v)))
+
+(define/contract (compile-hash h)
+  (-> hash? string?)
+  (let ([compiled-keys (map (lambda(k) (compile-kv k (hash-ref h k)))
+                            (hash-keys h))])
+    (++ "{\n"
+        (string-join
+         (map (curry string-append "  ")
+              compiled-keys)
+         ",\n")
+        "\n}")))
+
 (define/contract (compile-asset-description m i)
   (-> mod-struct? asset-struct? string?)
-    (format "description = ~s" (asset-description i)))
+    (compile-kv "description" (asset-description i)))
 
 
-(define/contract (compile-arr arr type)
-  (-> list? any/c string?)
-  (format
-   "{~a}"
-   (string-join
-    (map (lambda (x) (format type x))
-         arr) ",")))
 
 
-(define/contract (compile-ass-arr arr type1 type2)
-  (-> list? any/c any/c string?)
-  (format
-   "{~a}"
-   (string-join
-    (map (lambda (x) (format (++ type1 "=" type2) (first x) (second x)))
-         arr) ",")))
+;IMAGE SUPPORT.  Could go in a different file...
+
+(require 2htdp/image) 
+
+(provide compileable-image)
+(define (compileable-image m id img)
+  (special-compile
+     (lambda ()
+       (export-image-to-file m id img )
+       (format "~s" (++ id ".png"))
+       )))
 
 
+(define/contract (export-image-to-file m id img)
+  (-> mod-struct? string? image? boolean?)
+  (save-image img
+              (string-append (path-for m)
+                             "/textures/"
+                             id ".png")))
+;END IMAGE SUPPORT

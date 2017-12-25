@@ -1,24 +1,45 @@
 #lang racket
 
-(provide item-struct)
-(provide item-struct?)
-(provide compile-items)
-(provide define-item)
 
-;ONLY provide this to the end user?
-(provide custom-item)
+(provide define-item)
 
 (require 2htdp/image)
 (require "core.rkt")
 (require (for-syntax racket/syntax))
 
-(struct item-struct asset-struct (image) #:transparent)
+;(struct item-struct asset-struct (image) #:transparent)
 
+;Was a struct... not anymore...
+(define (item-struct id desc img m)
+  (asset-struct id desc (make-immutable-hash
+                         (list
+                          (cons 'inventory_image
+                                (compileable-image m id img))
+                          ))
+                m))
+
+
+(define-syntax (define-item stx)
+  (syntax-case stx ()
+    [(_ id desc image)
+     (with-syntax* ([item-id (format-id stx "~a" #'id)]
+                    [name (symbol->string (format-symbol "~a" #'id))])
+       #`(begin
+           (define id (item-struct name desc image my-mod))
+           (set-my-mod! (add-item my-mod id)))
+           )]))
+
+;id desc img m
 ;;Makes a stub -- e.g. for default:stone
 (define (default-item id)
   (item-struct (++ "" id)
-                (++ "The default " id)
-                (circle 0 "solid" "transparent")))
+               (++ "The default " id)
+               (circle 0 "solid" "transparent")
+               default-mod))
+
+
+
+
 
 (define-syntax (define-default-item stx)
   (syntax-case stx ()
@@ -86,69 +107,5 @@ sword_bronze
 sword_mese
 sword_diamond
 key)
-
-
-
-(define/contract (export-image-to-file m i)
-  (-> mod-struct? item-struct? boolean?)
-  (save-image (item-struct-image i)
-              (string-append (path-for m)
-                             "/textures/"
-                             (asset-short-name m i) ".png")))
-
-
-(define/contract (compile-item-inventory_image m i)
-  (-> mod-struct? item-struct? string?)
-  (format "inventory_image = ~s" (++ (asset-short-name m i) ".png") ))
-
-;minetest.register_craftitem("test:diamond_fragments", {
-;    description = "Alien Diamond Fragments",
-;    inventory_image = "my_diamonds.png"
-;})
-(define/contract (compile-item m i)
-  (-> mod-struct? item-struct? string?)
-  (++ "-- My item is named " (asset-name m i) "\n"
-      (format
-"      minetest.register_craftitem(\"~a\", {
-         ~a,
-         ~a,
-       })\n\n" (asset-name m i)
-           (compile-asset-description m i)
-           (compile-item-inventory_image m i))))
-
-(define/contract (export-item-code m i)
-  (-> mod-struct? item-struct? boolean?)
-     (with-output-to-file (lua-file-for m) #:exists 'append 
-       (lambda () (printf (++
-                           (compile-item m i)
-                           "\n"))))
-     #t)
-
-
-
-
-(define (custom-item name
-                     (image "missing.png")
-                     (desc "Missing Description"))
-  (item-struct name desc image))
-
-
-(define-syntax (define-item stx)
-  (syntax-case stx ()
-    [(_ id desc image)
-     (with-syntax* ([item-id (format-id stx "~a" #'id)]
-                    [name (symbol->string (format-symbol "~a" #'id))])
-       #`(begin
-           (define id (custom-item name image desc))
-           (set-my-mod! (add-item my-mod id)))
-           )]))
-
-
-(define/contract (compile-items m is)
-  (-> mod-struct? (listof item-struct?) boolean?)
-  (and
-   (all-true (map (curry export-image-to-file m) is))
-   (all-true (map (curry export-item-code m) is))
-   ))
 
 
