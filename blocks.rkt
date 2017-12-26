@@ -58,6 +58,27 @@
            )  ]))
 
 (define-default-blocks
+  tree
+  wood
+  leaves
+  sapling
+  apple
+  jungletree
+  junglewood
+  jungleleaves
+  junglesapling
+  pine_tree
+  pine_wood
+  pine_needles
+  pine_sapling
+  acacia_tree
+  acacia_wood
+  acacia_leaves
+  acacia_sapling
+  aspen_tree
+  aspen_wood
+  aspen_leaves
+  aspen_sapling
   cobble
   stonebrick
   stone_block

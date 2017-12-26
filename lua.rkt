@@ -111,6 +111,21 @@ end
   (ref-lua spawn-def entity))
 
 
+(define-lua place-schematic-def
+"
+function(path) 
+  return function(pos, node, player, pointed_thing)
+    minetest.place_schematic(pos,path,'random',nil,false)
+  end
+end
+")
+
+
+(provide place-schematic)
+(define (place-schematic schem)
+  (ref-lua place-schematic-def schem))
+
+
 
 
 

@@ -54,21 +54,13 @@
         (asset-struct-more b)))))
 
 
-(define (append-to-file f-name s)
-    (begin
-      ;(displayln (++ "Appending to file? " f-name))
-      (with-output-to-file f-name #:exists 'append
-        (thunk
-          (printf
-           (++
-                s
-                "--\n\n"))))
-      s))
+
 
 (define/contract (compile-mod m)
   (-> mod-struct? boolean?)
   (make-directory* (path-for m))
   (make-directory* (++ (path-for m) "/textures"))
+  (make-directory* (++ (path-for m) "/schematics"))
   (with-output-to-file (lua-file-for m) #:exists 'replace 
        (lambda () (printf (++
                            "-- This is my mod!  It's called "

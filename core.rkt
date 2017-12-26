@@ -77,6 +77,27 @@
       (f tree)
       ))
 
+(define (zip l1 l2)
+  (map list l1 l2))
+
+(define (with-index l1)
+  (zip l1 (range (length l1))))
+
+(define (filter-index pred l)
+  (map first
+       (filter (lambda (x) (pred (second x)))
+               (with-index l))))
+
+(define (evens l)
+  (filter-index even? l))
+
+(define (odds l)
+  (filter-index odd? l))
+
+(provide in-pairs)
+(define (in-pairs l)
+  (zip (evens l) (odds l)))
+
 ;CONFIG
 
 (define MINETEST_PATH "/home/thoughtstem/.minetest/")
@@ -261,6 +282,7 @@
 (define (anonymous-compileable-image img)
   (compileable-image my-mod (random-file-id) img))
 
+(provide random-file-id)
 (define (random-file-id)
   (number->string (random 1000000)))
 
@@ -271,3 +293,15 @@
                              "/textures/"
                              id ".png")))
 ;END IMAGE SUPPORT
+
+(provide append-to-file)
+(define (append-to-file f-name s)
+    (begin
+      ;(displayln (++ "Appending to file? " f-name))
+      (with-output-to-file f-name #:exists 'append
+        (thunk
+          (printf
+           (++
+                s
+                "--\n\n"))))
+      s))
