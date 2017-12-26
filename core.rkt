@@ -7,6 +7,8 @@
 (provide mod-struct-blocks)
 (provide mod-struct-items)
 (provide mod-struct-recipes)
+(provide mod-struct-lua-defs)
+(provide mod-struct-entities)
 (provide MINETEST_PATH)
 (provide path-for)
 (provide asset-name)
@@ -24,6 +26,8 @@
 
 (provide compile-asset-description)
 
+(provide anonymous-compileable-image)
+
 (provide lua-file-for)
 
 (provide path-for)
@@ -35,7 +39,7 @@
 (provide mod-struct)
 (provide mod-struct?)
 (provide mod-struct-name)
-(provide mod-struct-lua-defs)
+
 (provide set-my-mod!)
 (provide my-mod)
 
@@ -43,11 +47,14 @@
 (provide add-block)
 (provide add-recipe)
 (provide add-lua-def)
+(provide add-entity)
 
 (provide list_)
 
 (provide add-behaviour-to)
 (provide add-behaviour)
+
+(provide variableify)
 
 (require (for-syntax racket/syntax))
 
@@ -79,7 +86,7 @@
 
 (struct special-compile (f))
 
-(struct mod-struct (name items blocks recipes lua-defs) )
+(struct mod-struct (name items blocks recipes entities lua-defs) )
 
 (struct asset-struct (name description more mod) #:transparent)
 
@@ -114,6 +121,7 @@
      (replace-in-list (mod-struct-items m) t1 t2)
      (replace-in-list (mod-struct-blocks m) t1 t2)
      (replace-in-list (mod-struct-recipes m) t1 t2)
+     (replace-in-list (mod-struct-entities m) t1 t2)
      (replace-in-list (mod-struct-lua-defs m) t1 t2)))
 
 (define (replace-in-list l t1 t2)
@@ -125,7 +133,7 @@
 (define (add-to-more a kv)
   (let ([new-more   (hash-set
                      (asset-struct-more a)
-                     (string->symbol (first kv))
+                     (string->symbol (variableify (first kv)))
                      (second kv))])
     (struct-copy asset-struct a
                  [more new-more])))
@@ -134,10 +142,10 @@
 
 (provide default-mod)
 (define default-mod
-  (mod-struct "default" '() '() '() '()))
+  (mod-struct "default" '() '() '() '() '()))
 
 (define my-mod
-  (mod-struct "my_racket_mod" '() '() '() '()))
+  (mod-struct "my_racket_mod" '() '() '() '() '()))
 
 (define (set-my-mod! m)
   (set! my-mod m))
@@ -159,14 +167,20 @@
   (struct-copy mod-struct m
                [lua-defs (cons i (mod-struct-lua-defs m))]))
 
+(define (add-entity m i)
+  (struct-copy mod-struct m
+               [entities (cons i (mod-struct-entities m))]))
 
 
 
 (define (variableify s)
   (string-downcase
    (string-replace
-    s
-    " "
+    (string-replace
+     s
+     " "
+     "_")
+    "-"
     "_")))
 
 (define (asset-short-name m a)
@@ -198,9 +212,12 @@
 
 (define/contract (compile-v v)
   (-> any/c any/c)
-  (cond [(special-compile? v) ((special-compile-f v))]
+  (cond [(asset-struct? v) (format "~s" (asset-name v))]
+        [(image? v) (compile-v (anonymous-compileable-image v))]
+        [(special-compile? v) ((special-compile-f v))]
         [(string? v) (format "\"~a\"" v)]
         [(number? v) (number->string v)]
+        [(boolean? v) (if v "true" "false")]
         [(hash? v) (compile-hash v)]
         [(list? v) (++ "{" (string-join (map compile-v v) ",") "}")]
         [else
@@ -241,6 +258,11 @@
        (format "~s" (++ id ".png"))
        )))
 
+(define (anonymous-compileable-image img)
+  (compileable-image my-mod (random-file-id) img))
+
+(define (random-file-id)
+  (number->string (random 1000000)))
 
 (define/contract (export-image-to-file m id img)
   (-> mod-struct? string? image? boolean?)

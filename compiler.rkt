@@ -37,6 +37,15 @@
          "minetest.register_craft(~a)\n\n"
          (compile-v (asset->hash b)))))))
 
+(define (compile-entity b)
+  (special-compile
+   (thunk
+    (++  "-- My entity is named " (asset-name b) "\n"
+        (format
+         "mobs:register_mob(~s, ~a)\n\n"
+         (asset-name b)
+         (compile-v (asset->hash b)))))))
+
 
 (define (compile-lua-def b)
   (special-compile
@@ -76,6 +85,8 @@
                   (mod-struct-blocks m))
              (map compile-recipe
                   (mod-struct-recipes m))
+             (map compile-entity
+                  (mod-struct-entities m))
              )))
   #t)
 
