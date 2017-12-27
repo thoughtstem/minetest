@@ -111,3 +111,45 @@
            (set-my-mod! (add-block my-mod id)))
            )]))
 
+(define wool-mod
+  (mod-struct "wool" '() '() '() '() '()))
+
+(define-syntax (define-wool-block stx)
+  (syntax-case stx ()
+    [(_ x )
+     (with-syntax* ([name (symbol->string (format-symbol "~a" #'x))])
+       #`(begin
+           (define x (wool-block name) ) 
+           (provide x) 
+           ) ) ]))
+
+(define-syntax (define-wool-blocks stx)
+  (syntax-case stx ()
+    [(_ x ... )
+       #`(begin
+           (define-wool-block x ) ...
+           )  ]))
+
+(define (wool-block id)
+  (block-struct (++ "" id)
+                (++ "Wool: " id)
+                '()
+                wool-mod))
+
+(define-wool-blocks
+  white
+  grey
+  black
+  red
+  yellow
+  green
+  cyan
+  blue
+  magenta
+  orange
+  violet
+  brown
+  pink
+  dark_grey
+  dark_green)
+
