@@ -290,7 +290,7 @@
 0 -1 -1 4 1 #"\0"
 0 -1 1 #"\0"
 1.0 0 92 -1 -1 -1 -1 -1 0 0 0 0 0 1 0.0 0.0 0.0 0.0 0.0 0.0 0 0 0 255
-255 0 -1 -1           0 863 0 28 3 12 #"#lang racket"
+255 0 -1 -1           0 879 0 28 3 12 #"#lang racket"
 0 0 24 29 1 #"\n"
 0 0 24 29 1 #"\n"
 0 0 17 3 14 #";Housecleaning"
@@ -309,6 +309,8 @@
 0 0 24 29 1 #"\n"
 0 0 24 29 1 #"\n"
 0 0 17 3 30 #";TODO: Schematics almost done!"
+0 0 24 29 1 #"\n"
+0 0 17 3 55 #";        Getting trapped in a schematic is annoying...."
 0 0 24 29 1 #"\n"
 0 0 17 3 62
 #";        Support specifying bottom up intepretation of images?"
@@ -1533,7 +1535,7 @@
 0 0 24 3 7 #"       "
 0 0 19 3 7 #"\"brown\""
 0 0 24 3 1 #" "
-0 0 14 3 9 #"red-block"
+0 0 14 3 4 #"wood"
 0 0 24 29 1 #"\n"
 0 0 24 3 7 #"       "
 0 0 19 3 7 #"\"green\""
@@ -1555,7 +1557,7 @@
 0 0 19 3 7 #"\"brown\""
 0 0 24 3 1 #")"
 0 0 24 29 1 #"\n"
-0 0 24 3 12 #"           ("
+0 0 24 3 14 #"             ("
 0 0 14 3 4 #"star"
 0 0 24 3 1 #" "
 0 0 21 3 2 #"10"
@@ -1565,7 +1567,7 @@
 0 0 19 3 7 #"\"brown\""
 0 0 24 3 1 #")"
 0 0 24 29 1 #"\n"
-0 0 24 3 12 #"           ("
+0 0 24 3 14 #"             ("
 0 0 14 3 4 #"star"
 0 0 24 3 1 #" "
 0 0 21 3 2 #"10"
@@ -1575,7 +1577,7 @@
 0 0 19 3 7 #"\"brown\""
 0 0 24 3 1 #")"
 0 0 24 29 1 #"\n"
-0 0 24 3 12 #"           ("
+0 0 24 3 14 #"             ("
 0 0 14 3 4 #"star"
 0 0 24 3 1 #" "
 0 0 21 3 2 #"10"
@@ -1588,25 +1590,60 @@
 0 0 24 3 6 #"     ("
 0 0 14 3 4 #"list"
 0 0 24 3 1 #" "
-0 6           4 21 88
+0 6           4 21 83
 (
- #"(#(struct:translate 5 5 #(struct:ellipse 10 10 0 255 \"brown\")) #(s"
- #"truct:bb 10 10 10) #f)"
+ #"(#(struct:translate 2 2 #(struct:ellipse 4 4 0 255 \"brown\")) #(str"
+ #"uct:bb 4 4 4) #f)"
 ) 0 0 24 3 1 #" "
-0 6           4 21 88
+0 6           4 21 83
 (
- #"(#(struct:translate 5 5 #(struct:ellipse 10 10 0 255 \"brown\")) #(s"
- #"truct:bb 10 10 10) #f)"
+ #"(#(struct:translate 2 2 #(struct:ellipse 4 4 0 255 \"brown\")) #(str"
+ #"uct:bb 4 4 4) #f)"
 ) 0 0 24 3 1 #" "
-0 6           4 21 88
+0 6           4 21 83
 (
- #"(#(struct:translate 5 5 #(struct:ellipse 10 10 0 255 \"brown\")) #(s"
- #"truct:bb 10 10 10) #f)"
+ #"(#(struct:translate 2 2 #(struct:ellipse 4 4 0 255 \"brown\")) #(str"
+ #"uct:bb 4 4 4) #f)"
+) 0 0 24 3 1 #" "
+0 6           4 21 83
+(
+ #"(#(struct:translate 2 2 #(struct:ellipse 4 4 0 255 \"brown\")) #(str"
+ #"uct:bb 4 4 4) #f)"
+) 0 0 24 3 1 #" "
+0 6           4 21 83
+(
+ #"(#(struct:translate 2 2 #(struct:ellipse 4 4 0 255 \"brown\")) #(str"
+ #"uct:bb 4 4 4) #f)"
+) 0 0 24 3 1 #" "
+0 6           4 21 83
+(
+ #"(#(struct:translate 2 2 #(struct:ellipse 4 4 0 255 \"brown\")) #(str"
+ #"uct:bb 4 4 4) #f)"
 ) 0 0 24 3 1 #" "
 0 6           4 21 88
 (
  #"(#(struct:translate 5 5 #(struct:ellipse 10 10 0 255 \"green\")) #(s"
  #"truct:bb 10 10 10) #f)"
+) 0 0 24 3 1 #" "
+0 6           4 21 88
+(
+ #"(#(struct:translate 7 7 #(struct:ellipse 14 14 0 255 \"green\")) #(s"
+ #"truct:bb 14 14 14) #f)"
+) 0 0 24 3 1 #" "
+0 6           4 21 88
+(
+ #"(#(struct:translate 7 7 #(struct:ellipse 14 14 0 255 \"green\")) #(s"
+ #"truct:bb 14 14 14) #f)"
+) 0 0 24 3 1 #" "
+0 6           4 21 88
+(
+ #"(#(struct:translate 7 7 #(struct:ellipse 14 14 0 255 \"green\")) #(s"
+ #"truct:bb 14 14 14) #f)"
+) 0 0 24 3 1 #" "
+0 6           4 21 88
+(
+ #"(#(struct:translate 7 7 #(struct:ellipse 14 14 0 255 \"green\")) #(s"
+ #"truct:bb 14 14 14) #f)"
 ) 0 0 24 3 1 #" "
 0 6           4 21 88
 (
