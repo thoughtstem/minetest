@@ -15,6 +15,8 @@
 (provide asset-name)
 (provide asset-short-name)
 
+(provide add-behaviour)
+
 (provide asset-struct)
 (provide asset-struct?)
 (provide asset-struct-name)
@@ -41,6 +43,8 @@
 (provide mod-struct?)
 (provide mod-struct-name)
 
+(provide add-to-more)
+
 (provide set-my-mod!)
 (provide my-mod)
 
@@ -50,10 +54,8 @@
 (provide add-lua-def)
 (provide add-entity)
 
-(provide list_)
 
-(provide add-behaviour-to)
-(provide add-behaviour)
+(provide list_)
 
 (provide variableify)
 
@@ -119,23 +121,11 @@
    (asset-struct-description a)))
 
 
-(define-syntax (add-behaviour-to stx)
-  (syntax-case stx ()
-    [(_ target (key val)) 
-     (with-syntax* ([target-id (format-id stx "~a" #'target)]
-                    [key-str (symbol->string
-                              (format-symbol "~a" #'key))])
-       #`(begin
-           (add-behaviour target-id
-                       (list key-str val)
-                       my-mod)
-          "Added behaviour"))]))
-
-
 (define (add-behaviour target kv m)
   (let ([updated-target (add-to-more target kv)])
     (set! my-mod
           (replace-in-mod m target updated-target))))
+                
 
 (define (replace-in-mod m t1 t2)
   (mod-struct

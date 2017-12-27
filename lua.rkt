@@ -61,14 +61,59 @@
                   ) ) ]))
 
 
+(define-syntax (define-lua-callback stx)
+  (syntax-case stx ()
+    [(_ name context ) 
+     (with-syntax* ([def-id (format-id stx "on-~a-~a-def" #'context #'name)]
+                    [ref-id (format-id stx "on-~a-~a" #'context #'name)]
+                    [wrapper-id (format-id stx "~a-wrapper" #'context)]
+                    )
+       #`(begin
+           (define-lua def-id
+             (name wrapper-id))
 
-;Some default code snippets
+           (provide ref-id)
+           (define (ref-id . args)
+             (apply (curry ref-lua def-id) args))
 
-(define-lua particles-def
-"
-function(file,num,vx,vy,vz,size) 
-  return function(pos, node, player, pointed_thing)
-    for i=1,num do
+          ))]))
+
+(define-syntax (define-lua-callbacks stx)
+  (syntax-case stx ()
+    [(_ name context ... ) 
+     #'(begin
+         (define-lua-callback name context)
+         ...)]))
+
+
+(define (block-punch-wrapper code)
+  (format
+   "return function(pos, node, player, pointed_thing)
+      ~a
+    end"
+   code))
+
+
+(define (item-drop-wrapper code)
+  (format
+   "return function(itemstack, dropper, pos)
+      ~a
+      itemstack:take_item()
+      return itemstack
+    end"
+   code))
+
+(define (particles wrapper)
+  (format
+"function(num,file)
+  vx = 5
+  vy = 5
+  vz = 5
+  size = 10
+  ~a
+end"
+  (wrapper
+    "for i=1,num do
 		  minetest.add_particle({
 			  pos = pos,
 			  velocity = {x=vx*(math.random()-.5), y=vy*(math.random()-.5), z=vz*(math.random()-.5)},
@@ -80,57 +125,75 @@ function(file,num,vx,vy,vz,size)
 			  texture = file,
 			  playername = 'singleplayer'
 		   })
-     end
-  end
-end
-")
 
-(provide particles)
-(define (particles img (num 30) (vx 2) (vy 2) (vz 2) (size 5))
-  (ref-lua particles-def img num vx vy vz size))
+   end")
+))
 
 
 
-(define-lua spawn-def
-"
-function(entity) 
-  return function(pos, node, player, pointed_thing)
-    local new_pos = {
+(define-lua-callbacks
+  particles
+  block-punch
+  item-drop)
+
+
+
+
+(define (spawn wrapper)
+  (format
+"function(entity) 
+  ~a
+end"
+  (wrapper
+    "local new_pos = {
       x=pos.x,
       y=pos.y + 1,
       z=pos.z
     }
-    minetest.add_entity(new_pos, entity)
-  end
-end
-")
+    minetest.add_entity(new_pos, entity)")
+))
 
 
-(provide spawn)
-(define (spawn entity)
-  (ref-lua spawn-def entity))
+(define-lua-callbacks
+  spawn
+  block-punch
+  item-drop)
 
 
-(define-lua place-schematic-def
-"
-function(path) 
-  return function(pos, node, player, pointed_thing)
-    minetest.place_schematic(pos,path,'random',nil,false)
-  end
-end
-")
+(define (place-schematic wrapper)
+  (format
+"function(path) 
+  ~a
+end"
+  (wrapper
+    "minetest.place_schematic(pos,path,'random',nil,false)")
+))
 
 
-(provide place-schematic)
-(define (place-schematic schem)
-  (ref-lua place-schematic-def schem))
+(define-lua-callbacks
+  place-schematic
+  block-punch
+  item-drop)
+
+
+(define (place-block wrapper)
+  (format
+"function(block) 
+  ~a
+end"
+  (wrapper
+    "minetest.set_node(pos,{name=block})")
+))
+
+(define-lua-callbacks
+  place-block
+  block-punch
+  item-drop)
 
 
 
 
-
-
-(define-lua on-punch-sequence-def
+(define-lua on-block-punch-sequence-def
 "
 function(fs) 
   return function(pos, node, player, pointed_thing)
@@ -139,7 +202,30 @@ function(fs)
 end
 ")
 
-(provide on-punch-sequence)
-(define (on-punch-sequence . fs)
-  (ref-lua on-punch-sequence-def fs))
+(provide on-block-punch-sequence)
+(define (on-block-punch-sequence . fs)
+  (ref-lua on-block-punch-sequence-def fs))
+
+
+
+(define-lua on-item-drop-sequence-def
+"
+function(fs) 
+  return function(itemstack, dropper, pos)
+    for i,f in ipairs(fs) do f(itemstack, dropper, pos) end
+    itemstack:take_item()
+    return itemstack
+  end
+end
+")
+
+(provide on-item-drop-sequence)
+(define (on-item-drop-sequence . fs)
+  (ref-lua on-item-drop-sequence-def fs))
+
+
+
+
+
+
 
