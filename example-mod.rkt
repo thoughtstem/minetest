@@ -290,7 +290,7 @@
 0 -1 -1 4 1 #"\0"
 0 -1 1 #"\0"
 1.0 0 92 -1 -1 -1 -1 -1 0 0 0 0 0 1 0.0 0.0 0.0 0.0 0.0 0.0 0 0 0 255
-255 0 -1 -1           0 861 0 28 3 12 #"#lang racket"
+255 0 -1 -1           0 863 0 28 3 12 #"#lang racket"
 0 0 24 29 1 #"\n"
 0 0 24 29 1 #"\n"
 0 0 17 3 14 #";Housecleaning"
@@ -313,9 +313,11 @@
 0 0 17 3 62
 #";        Support specifying bottom up intepretation of images?"
 0 0 24 29 1 #"\n"
-0 0 17 3 48 #";        Round to nearest color (in the supplied"
-0 0 17 3 38 #" mapping)?  Star was weirdly dithered."
-0 0 24 29 1 #"\n"
+0 0 17 3 79
+(
+ #";        Ensure that each image is padded according to the largest i"
+ #"n the list."
+) 0 0 24 29 1 #"\n"
 0 0 17 3 44 #";        Supply a wool mapping as a default."
 0 0 24 29 1 #"\n"
 0 0 17 3 53 #";            Would work best with a color rounding..."
@@ -1539,7 +1541,9 @@
 0 0 14 3 6 #"leaves"
 0 0 24 3 1 #")"
 0 0 24 29 1 #"\n"
-0 0 24 3 6 #"     ("
+0 0 24 3 5 #"     "
+0 0 17 3 2 #"#;"
+0 0 24 3 1 #"("
 0 0 14 3 4 #"list"
 0 0 24 3 2 #" ("
 0 0 14 3 4 #"star"
@@ -1581,33 +1585,34 @@
 0 0 19 3 7 #"\"brown\""
 0 0 24 3 2 #"))"
 0 0 24 29 1 #"\n"
-0 0 24 3 5 #"     "
-0 0 17 3 7 #";(list "
-0 6           4 17 88
+0 0 24 3 6 #"     ("
+0 0 14 3 4 #"list"
+0 0 24 3 1 #" "
+0 6           4 21 88
 (
  #"(#(struct:translate 5 5 #(struct:ellipse 10 10 0 255 \"brown\")) #(s"
  #"truct:bb 10 10 10) #f)"
-) 0 0 17 3 1 #" "
-0 6           4 17 88
+) 0 0 24 3 1 #" "
+0 6           4 21 88
+(
+ #"(#(struct:translate 5 5 #(struct:ellipse 10 10 0 255 \"brown\")) #(s"
+ #"truct:bb 10 10 10) #f)"
+) 0 0 24 3 1 #" "
+0 6           4 21 88
+(
+ #"(#(struct:translate 5 5 #(struct:ellipse 10 10 0 255 \"brown\")) #(s"
+ #"truct:bb 10 10 10) #f)"
+) 0 0 24 3 1 #" "
+0 6           4 21 88
 (
  #"(#(struct:translate 5 5 #(struct:ellipse 10 10 0 255 \"green\")) #(s"
  #"truct:bb 10 10 10) #f)"
-) 0 0 17 3 1 #" "
-0 6           4 17 88
-(
- #"(#(struct:translate 5 5 #(struct:ellipse 10 10 0 255 \"brown\")) #(s"
- #"truct:bb 10 10 10) #f)"
-) 0 0 17 3 1 #" "
-0 6           4 17 88
+) 0 0 24 3 1 #" "
+0 6           4 21 88
 (
  #"(#(struct:translate 5 5 #(struct:ellipse 10 10 0 255 \"green\")) #(s"
  #"truct:bb 10 10 10) #f)"
-) 0 0 17 3 1 #" "
-0 6           4 17 88
-(
- #"(#(struct:translate 5 5 #(struct:ellipse 10 10 0 255 \"brown\")) #(s"
- #"truct:bb 10 10 10) #f)"
-) 0 0 17 3 1 #")"
+) 0 0 24 3 1 #")"
 0 0 24 29 1 #"\n"
 0 0 24 3 7 #"     ))"
 0 0 24 29 1 #"\n"

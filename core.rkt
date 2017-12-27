@@ -1,6 +1,7 @@
 #lang racket
 
 (provide ++)
+(provide zip)
 (provide all-true)
 (provide asset-struct)
 (provide mod-struct)
