@@ -66,11 +66,17 @@
                            "-- This is my mod!  It's called "
                            (mod-struct-name m)
                            "\n\n\n"))))
+
+  ;Do all defs first
+  (map (curry append-to-file (lua-file-for m))
+       (map compile-v
+            (map compile-lua-def
+                 (mod-struct-lua-defs m))))
+
+  ;Then do other assets
   (map (curry append-to-file (lua-file-for m))
        (map compile-v
             (append
-             (map compile-lua-def
-                  (mod-struct-lua-defs m))
              (map compile-item
                   (mod-struct-items m))
              (map compile-block

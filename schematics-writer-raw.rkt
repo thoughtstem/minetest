@@ -3,6 +3,8 @@
 (provide schematics-writer-raw)
 (define schematics-writer-raw
   "
+local _ = {name = 'air', prob = 0}
+
 local mts_save = function(name, schematic)
 	local s = minetest.serialize_schematic(schematic, 'mts', {})
 	local path = minetest.get_modpath('my_racket_mod') .. '/schematics'
