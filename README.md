@@ -7,4 +7,4 @@ You can also use Racket's full power for procedurally generating assets.
 
 There is minimal support for hooking into Lua code for runtime behaviour.
 
-The goal is to make it as quick and easy as possible to get your art into Minetest.
+The goal is to make it as quick and easy as possible to get your art into Minetest.  The goal is NOT to replace Lua for in-game scripting.
