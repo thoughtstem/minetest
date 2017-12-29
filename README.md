@@ -1,10 +1,10 @@
 # #lang minetest for Modding Minetest in Racket
 
-This language gives helps you create Minetest mods quickly.  Quick demo:
+This language helps you create Minetest mods.  Quick demo:
 
 ![Alt text](/examples/quick-demo.png?raw=true "Quick Demo")
 
-This gives you a red block that toggles to a green block when you punch it (and vice versa):
+This compiles to a mod that gives you a red block that toggles to a green block when you punch it (and vice versa):
 
 ![Alt text](/examples/quick-demo-result.png?raw=true "Quick Demo Result")
 
