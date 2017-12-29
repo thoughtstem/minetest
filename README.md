@@ -1,6 +1,6 @@
-# The Minetest #lang for Racket
+# #lang minetest for Modding Minetest in Racket
 
-A compile-time framework for creating Minetest mods. (By compile-time, I meant that this runs before you run Minetest.  It generates Lua code that executes during the Minetest runtime.)
+This is a compile-time framework for creating Minetest mods. (By compile-time, I mean that this runs before you run Minetest.  It generates Lua code that executes during the Minetest runtime.)
 
 It gives you a powerful declarative language for creating Minetest assets.  Quick demo:
 
@@ -45,6 +45,30 @@ You will find a hello block in your inventory:
 
 ![Alt text](/examples/hello-demo.png?raw=true "Hello")
 
+## Current Status
+
+This language gives you ways of converting images into:
+
+* Blocks
+* Items
+* (Cube shaped) Entities 
+* Recipes
+* Particles
+* Schematics
+
+There are also a (limited) set of game rules for defining callbacks.  Only a few callbacks are currently supported:
+
+* on_punch for blocks
+* on_drop for blocks
+* on_drop for items
+
+## Further Reading
+
+* ["How to Design Programs"](http://www.ccs.neu.edu/home/matthias/HtDP2e/) - For an amazing introduction to Racket and the equally amazing image library (2htdp/image).  Anything you can create with the 2htdp/image library can be placed into Minetest with #lang minetest
+
+* [The docs for #lang minetest](http://docs.racket-lang.org/minetest/index.html)
+
+* [The docs for Minetest modding in Lua](https://rubenwardy.com/minetest_modding_book/en/index.html) - For when you want to do something that #lang minetest doesn't yet support.  The compilation process tries to produce readable Lua code.  Feel free to edit it after compilation (just remember that it will get overwritten when you compile again -- so you might want to copy the compiled output directory to a new directory).
 
 ## Authors
 
