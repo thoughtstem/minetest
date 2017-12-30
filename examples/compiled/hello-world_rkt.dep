@@ -1,0 +1,1 @@
+("6.11" ("edb6c7ebf4b395dc8f1125ce8c526dd5060f2b53" . "5d619fd7b490f0e7530f9fec6a2738956b1937a6") (collects #"minetest" #"main.rkt") (collects #"minetest" #"rocket-module.rkt") (collects #"racket" #"runtime-config.rkt"))
