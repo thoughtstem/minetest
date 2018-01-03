@@ -24,6 +24,9 @@
   (asset-struct name desc
                 (make-immutable-hash
                          (list
+                          (cons 'groups (make-hash
+                                           (list
+                                             (cons "choppy" 1))))
                           (cons 'tiles
                                 (map (curry compileable-tile m name)
                                      tiles
