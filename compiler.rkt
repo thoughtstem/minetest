@@ -86,7 +86,7 @@
              (map compile-entity
                   (mod-struct-entities m))
              )))
-  #t)
+  "Your mod is ready!")
 
   
  ; (and
