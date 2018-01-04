@@ -56,8 +56,7 @@
 
 
 
-(define/contract (compile-mod m)
-  (-> mod-struct? boolean?)
+(define (compile-mod m)
   (make-directory* (path-for m))
   (make-directory* (++ (path-for m) "/textures"))
   (make-directory* (++ (path-for m) "/schematics"))
