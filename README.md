@@ -12,7 +12,7 @@ The goal of ``#lang minetest`` is to help you get procedurally generated art ont
 
 ## Getting Started
 
-(Note: ``#lang minetest`` currently only works on Linux.)
+(Note: ``#lang minetest`` works out of the box on Linux.  For Mac or Windows, you'll have to make sure your minetest installation is at ~/HOME_DIR/.minetest)
 
 Install Minetest:
 
