@@ -103,8 +103,15 @@
 
 ;CONFIG
 
-(define MINETEST_PATH "/home/thoughtstem/.minetest/")
+;(define MINETEST_PATH "/home/thoughtstem/.minetest/")
 
+(define home (find-system-path 'home-dir))
+
+(define MINETEST_PATH
+  (cond
+    [(eq? (system-type 'os) 'unix) "/home/thoughtstem/.minetest/"]
+    [(eq? (system-type 'os) 'macosx) (string-append (path->string home) "/Library/Application Support/minetest")]
+    [(eq? (system-type 'os) 'windows) "C:/minetest/"]))
 
 ;DATA STRUCTURES
 
