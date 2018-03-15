@@ -109,8 +109,8 @@
 
 (define MINETEST_PATH
   (cond
-    [(eq? (system-type 'os) 'unix) "/home/thoughtstem/.minetest/"]
-    [(eq? (system-type 'os) 'macosx) (string-append (path->string home) "/Library/Application Support/minetest")]
+    [(eq? (system-type 'os) 'unix) (string-append (path->string home) ".minetest/")]
+    [(eq? (system-type 'os) 'macosx) (string-append (path->string home) "Library/Application Support/minetest")]
     [(eq? (system-type 'os) 'windows) "C:/minetest/"]))
 
 ;DATA STRUCTURES
