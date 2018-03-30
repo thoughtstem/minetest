@@ -61,6 +61,8 @@
            )  ]))
 
 (define-default-blocks
+  air
+  glass
   tree
   wood
   leaves
