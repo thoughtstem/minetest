@@ -93,6 +93,21 @@
     end"
    code))
 
+(define (block-use-wrapper code)
+  (format
+   "return function(itemstack, player, pointed_thing)
+      local pos = minetest.get_pointed_thing_position(pointed_thing, true) or {x=player:get_pos().x, y=player:get_pos().y+1, z=player:get_pos().z}
+      ~a
+    end"
+   code))
+
+(define (item-use-wrapper code)
+  (format
+   "return function(itemstack, player, pointed_thing)
+      local pos = minetest.get_pointed_thing_position(pointed_thing, true) or {x=player:get_pos().x, y=player:get_pos().y+1, z=player:get_pos().z}
+      ~a
+    end"
+   code))
 
 (define (item-drop-wrapper code)
   (format
@@ -134,6 +149,8 @@ end"
 (define-lua-callbacks
   particles
   block-punch
+  block-use
+  item-use
   item-drop)
 
 
@@ -157,6 +174,8 @@ end"
 (define-lua-callbacks
   spawn
   block-punch
+  block-use
+  item-use
   item-drop)
 
 
@@ -173,6 +192,8 @@ end"
 (define-lua-callbacks
   place-schematic
   block-punch
+  block-use
+  item-use
   item-drop)
 
 
@@ -188,6 +209,8 @@ end"
 (define-lua-callbacks
   place-block
   block-punch
+  block-use
+  item-use
   item-drop)
 
 
@@ -206,7 +229,31 @@ end
 (define (on-block-punch-sequence . fs)
   (ref-lua on-block-punch-sequence-def fs))
 
+(define-lua on-block-use-sequence-def
+"
+function(fs) 
+  return function(itemstack, player, pointed_thing)
+    for i,f in ipairs(fs) do f(itemstack,player,pointed_thing) end
+  end
+end
+")
 
+(provide on-block-use-sequence)
+(define (on-block-use-sequence . fs)
+  (ref-lua on-block-use-sequence-def fs))
+
+(define-lua on-item-use-sequence-def
+"
+function(fs) 
+  return function(itemstack, player, pointed_thing)
+    for i,f in ipairs(fs) do f(itemstack,player,pointed_thing) end
+  end
+end
+")
+
+(provide on-item-use-sequence)
+(define (on-item-use-sequence . fs)
+  (ref-lua on-item-use-sequence-def fs))
 
 (define-lua on-item-drop-sequence-def
 "
