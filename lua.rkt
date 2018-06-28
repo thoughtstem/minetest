@@ -170,7 +170,6 @@ end"
     minetest.add_entity(new_pos, entity)")
 ))
 
-
 (define-lua-callbacks
   spawn
   block-punch
@@ -178,6 +177,26 @@ end"
   item-use
   item-drop)
 
+(define (drop wrapper)
+  (format
+"function(item) 
+  ~a
+end"
+  (wrapper
+    "local new_pos = {
+      x=pos.x,
+      y=pos.y + 1,
+      z=pos.z
+    }
+    minetest.add_item(new_pos, item)")
+))
+
+(define-lua-callbacks
+  drop
+  block-punch
+  block-use
+  item-use
+  item-drop)
 
 (define (place-schematic wrapper)
   (format
